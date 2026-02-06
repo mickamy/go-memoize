@@ -101,9 +101,13 @@ func TestMemo_Get(t *testing.T) {
 			return "val", nil
 		}, memoize.WithTTL(50*time.Millisecond))
 
-		m.Get("a")
+		if _, err := m.Get("a"); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 		time.Sleep(100 * time.Millisecond)
-		m.Get("a")
+		if _, err := m.Get("a"); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 
 		if c := callCount.Load(); c != 2 {
 			t.Errorf("function called %d times, want 2", c)

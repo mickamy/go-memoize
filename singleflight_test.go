@@ -90,17 +90,21 @@ func TestSingleflight(t *testing.T) {
 
 		go func() {
 			defer wg.Done()
-			sf.Do("a", func() (int, error) {
+			if _, err := sf.Do("a", func() (int, error) {
 				count1.Add(1)
 				return 1, nil
-			})
+			}); err != nil {
+				t.Errorf("unexpected error: %v", err)
+			}
 		}()
 		go func() {
 			defer wg.Done()
-			sf.Do("b", func() (int, error) {
+			if _, err := sf.Do("b", func() (int, error) {
 				count2.Add(1)
 				return 2, nil
-			})
+			}); err != nil {
+				t.Errorf("unexpected error: %v", err)
+			}
 		}()
 
 		wg.Wait()
